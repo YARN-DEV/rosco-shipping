@@ -57,13 +57,11 @@ export default function TrackingForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleTrack = (e: FormEvent) => {
+  const handleTrack = async (e: FormEvent) => {
     e.preventDefault();
-    
-    // Trim spaces from input
+
     const trimmedNumber = trackingNumber.trim().toUpperCase();
-    
-    // Reset previous states
+
     setError('');
     setTrackingInfo(null);
 
@@ -72,22 +70,44 @@ export default function TrackingForm() {
       return;
     }
 
-    // Start loading
     setIsLoading(true);
 
-    // Simulate loading delay
-    setTimeout(() => {
-      // Look up shipment
-      const shipment = SHIPMENTS[trimmedNumber];
+    try {
+      // First check the live database
+      const res = await fetch(`/api/track?number=${encodeURIComponent(trimmedNumber)}`);
+      const json = await res.json();
 
+      if (json.found && json.data) {
+        const s = json.data;
+        setTrackingInfo({
+          status: 'In Transit',
+          lastLocation: s.origin_country,
+          eta: 'TBD',
+          route: `${s.origin_country} → ${s.delivery_address}`,
+          senderName: s.sender_name,
+          senderCompany: s.company_name,
+          senderEmail: s.company_email,
+          receiverName: s.recipient_name,
+          receiverPhone: s.phone_number,
+          deliveryAddress: s.delivery_address,
+        });
+        setIsLoading(false);
+        return;
+      }
+    } catch {
+      // fall through to hardcoded lookup
+    }
+
+    // Fall back to hardcoded demo shipments
+    setTimeout(() => {
+      const shipment = SHIPMENTS[trimmedNumber];
       if (shipment) {
         setTrackingInfo(shipment);
       } else {
         setError('No shipment found with this tracking number');
       }
-      
       setIsLoading(false);
-    }, 1500); // 1.5 second delay
+    }, 1500);
   };
 
   return (
