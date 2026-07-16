@@ -17,6 +17,18 @@ const SHIPMENTS: Record<string, {
   receiverPhone?: string;
   deliveryAddress?: string;
 }> = {
+  'RS847261': {
+    status: 'In Transit',
+    lastLocation: 'Mexico',
+    eta: 'TBD',
+    route: 'Mexico → 1401 Hwy 349 Myrtle Ms 38650 (International Freight)',
+    senderName: 'Danica Patrick',
+    senderCompany: 'Rocco shipping company',
+    senderEmail: 'roscoshipping32@deliveryman.com',
+    receiverName: 'Johnny Garrison',
+    receiverPhone: '+1 (662) 538-2811',
+    deliveryAddress: '1401 Hwy 349 Myrtle Ms 38650',
+  },
   'DNC471BC554780': {
     status: 'In Transit',
     lastLocation: 'Bronx, New York',
